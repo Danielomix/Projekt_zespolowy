@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ustawienia Profilu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Nawigacja -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/">Projekt-Zespolowy</a>
+        </div>
+        <ul class="navbar-nav">
+            <li><a href="/">Strona Główna</a></li>
+            {% if 'user' in session %}
+                <li><a href="/profile">Ustawienia Profilu</a></li>
+                <li><a href="/auth?action=login">Wyloguj</a></li>
+            {% else %}
+                <li><a href="/auth?action=login">Zaloguj się</a></li>
+                <li><a href="/auth?action=register">Zarejestruj się</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Pasek informacyjny pod navbar -->
+    {% if user %}
+    <div class="info-bar">
+        <span>Witaj, {{ user.email }}!</span>
+        <span>{{ current_date }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Treść strony profilu -->
+    <div class="content">
+        <h1>Ustawienia Profilu</h1>
+
+        {% if 'user' not in session %}
+            <p>Aby edytować ustawienia profilu, musisz być zalogowany. <a href="/auth?action=login">Zaloguj się</a> lub <a href="/auth?action=register">zarejestruj się</a>.</p>
+        {% else %}
+            <h2>Witaj, {{ user['email'] }}!</h2>
+            <form method="POST">
+                <label for="email">Adres email:</label>
+                <input type="email" name="email" value="{{ user['email'] }}" required>
+
+                <label for="role">Rola:</label>
+                <select name="role">
+                    <option value="user" {% if user['role'] == 'user' %}selected{% endif %}>User</option>
+                    <option value="admin" {% if user['role'] == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+
+                <button type="submit">Zapisz zmiany</button>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>

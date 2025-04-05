@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona Główna</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Nawigacja -->
+    <nav class="navbar">
+        <!-- Nazwa aplikacji po lewej stronie -->
+        <div class="navbar-brand">
+            <a href="/">Projekt-Zespolowy</a>
+        </div>
+
+        <!-- Linki do menu nawigacyjnego po prawej stronie -->
+        <ul class="navbar-nav">
+            <li><a href="/">Strona Główna</a></li>
+            {% if 'user_id' in session %}
+                <!-- Po zalogowaniu -->
+                <li><a href="/profile">Ustawienia Profilu</a></li>
+                <li><a href="/auth/logout">Wyloguj</a></li>
+            {% else %}
+                <!-- Jeśli użytkownik nie jest zalogowany -->
+                <li><a href="/auth?action=login">Zaloguj się</a></li>
+                <li><a href="/auth?action=register">Zarejestruj się</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Pasek informacyjny pod navbar -->
+    {% if 'user_id' in session %}
+    <div class="info-bar">
+        <span>Witaj, {{ user['email'] }}!</span>  <!-- Zmienna user.email w przypadku zalogowanego użytkownika -->
+        <span>{{ current_date }}</span>
+    </div>
+    {% else %}
+    <div class="info-bar">
+        <span>{{ current_date }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Główna treść -->
+    <div class="content">
+        <h1>Witaj na stronie głównej!</h1>
+    </div>
+
+</body>
+</html>
