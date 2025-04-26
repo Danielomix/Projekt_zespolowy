@@ -16,7 +16,7 @@
             <li><a href="/">Strona Główna</a></li>
             {% if 'user' in session %}
                 <li><a href="/profile">Ustawienia Profilu</a></li>
-                <li><a href="/auth?action=login">Wyloguj</a></li>
+                <li><a href="/auth?action=logout">Wyloguj</a></li>
             {% else %}
                 <li><a href="/auth?action=login">Zaloguj się</a></li>
                 <li><a href="/auth?action=register">Zarejestruj się</a></li>
@@ -24,7 +24,7 @@
         </ul>
     </nav>
 
-    <!-- Pasek informacyjny pod navbar -->
+    <!-- Pasek informacyjny -->
     {% if user %}
     <div class="info-bar">
         <span>Witaj, {{ user.email }}!</span>
@@ -33,26 +33,28 @@
     {% endif %}
 
     <!-- Treść strony profilu -->
-    <div class="content">
-        <h1>Ustawienia Profilu</h1>
+<div class="content">
+    <h1>Ustawienia Profilu</h1>
 
-        {% if 'user' not in session %}
-            <p>Aby edytować ustawienia profilu, musisz być zalogowany. <a href="/auth?action=login">Zaloguj się</a> lub <a href="/auth?action=register">zarejestruj się</a>.</p>
-        {% else %}
-            <h2>Witaj, {{ user['email'] }}!</h2>
-            <form method="POST">
-                <label for="email">Adres email:</label>
-                <input type="email" name="email" value="{{ user['email'] }}" required>
+    {% if not user %}
+        <p>Aby edytować ustawienia profilu, musisz być zalogowany. <a href="/auth?action=login">Zaloguj się</a> lub <a href="/auth?action=register">Zarejestruj się</a>.</p>
+    {% else %}
+        <form method="POST" action="/profile/edit">
+            <label for="first_name">Imię:</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
 
-                <label for="role">Rola:</label>
-                <select name="role">
-                    <option value="user" {% if user['role'] == 'user' %}selected{% endif %}>User</option>
-                    <option value="admin" {% if user['role'] == 'admin' %}selected{% endif %}>Admin</option>
-                </select>
+            <label for="last_name">Nazwisko:</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
 
-                <button type="submit">Zapisz zmiany</button>
-            </form>
-        {% endif %}
-    </div>
+            <label for="phone_number">Numer telefonu:</label>
+            <input type="text" id="phone_number" name="phone_number" value="{{ user.phone_number }}">
+
+            <label for="email_notifications">Powiadomienia e-mail:</label>
+            <input type="checkbox" id="email_notifications" name="email_notifications" {% if user.email_notifications %}checked{% endif %}>
+
+            <button type="submit">Zapisz zmiany</button>
+        </form>
+    {% endif %}
+</div>
 </body>
 </html>

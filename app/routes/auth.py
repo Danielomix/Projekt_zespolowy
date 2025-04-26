@@ -30,6 +30,7 @@ def auth_user():
                 })
                 # Po rejestracji logujemy użytkownika automatycznie
                 session['user_id'] = user.uid  # Przechowywanie UID w sesji
+                print(f"Logged in user_id: {session.get('user_id')}")
                 return redirect(url_for('auth.home'))  # Po rejestracji przekierowujemy na stronę główną
             elif action == "login":
                 # Logowanie użytkownika

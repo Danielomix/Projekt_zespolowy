@@ -2,8 +2,8 @@ from flask import Flask, render_template, session
 from datetime import datetime
 import os
 from app.routes.auth import auth_bp
+from app.routes.profile import profile_bp  # Importowanie blueprintu profilu
 from app.session_manager import is_user_logged_in, get_user_from_session  # Importujemy funkcje do obsługi sesji
-from app.routes import profile_bp  # Importowanie blueprintów
 
 def create_app():
     # Wskazujemy pełną ścieżkę do katalogu 'templates' i 'static' w katalogu głównym projektu
@@ -15,6 +15,7 @@ def create_app():
 
     # Rejestracja blueprintów
     app.register_blueprint(auth_bp)
+    app.register_blueprint(profile_bp)  # Rejestracja blueprintu profilu
 
     @app.route("/")
     def home():

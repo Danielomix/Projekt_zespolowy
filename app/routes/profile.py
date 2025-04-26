@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect
+from flask import Blueprint, render_template, request, session, redirect, flash
 import firebase_admin
 from firebase_admin import auth, firestore, db
 
@@ -38,5 +38,41 @@ def profile():
             return redirect("/profile")  # Po zapisaniu zmian wróć na stronę profilu
 
         return render_template("profile.html", user=user_data)
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+@profile_bp.route("/edit", methods=["POST"])
+def edit_profile():
+    if 'user_id' not in session:
+        return redirect("/auth?action=login")  # Przekierowanie do logowania, jeśli użytkownik nie jest zalogowany
+
+    try:
+        user = auth.get_user(session['user_id'])  # Pobranie użytkownika na podstawie ID z sesji
+        user_data = firestore_db.collection("users").document(user.uid).get().to_dict()  # Pobranie danych z Firestore
+
+        # Pobierz dane z formularza
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        phone_number = request.form.get("phone_number")
+        email_notifications = request.form.get("email_notifications") == "on"
+
+        # Aktualizacja danych w Firestore
+        firestore_db.collection("users").document(user.uid).update({
+            "first_name": first_name,
+            "last_name": last_name,
+            "phone_number": phone_number,
+            "email_notifications": email_notifications
+        })
+
+        # Aktualizacja w Realtime Database
+        realtime_db.child("users").child(user.uid).update({
+            "first_name": first_name,
+            "last_name": last_name,
+            "phone_number": phone_number,
+            "email_notifications": email_notifications
+        })
+
+        flash("Profil został zaktualizowany!", "success")
+        return redirect("/profile")
     except Exception as e:
         return f"Error: {str(e)}"
